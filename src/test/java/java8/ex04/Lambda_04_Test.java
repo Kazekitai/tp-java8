@@ -17,15 +17,15 @@ public class Lambda_04_Test {
 
     // tag::interfaces[]
     interface GenericPredicate<T> {
-        // TODO
+        boolean test(T t);
     }
 
     interface GenericMapper<T, E> {
-        // TODO
+        E map(T t);
     }
 
     interface Processor<T> {
-        // TODO
+        T process(T t);
     }
     // end::interfaces[]
 
