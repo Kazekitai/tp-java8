@@ -2,10 +2,14 @@ package java8.ex06;
 
 import org.junit.Test;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.function.Consumer;
-import java.util.function.UnaryOperator;
 import java.util.logging.Logger;
-import java.util.stream.IntStream;
+import java.util.stream.Collectors;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
@@ -34,7 +38,8 @@ public class Stream_06_Test {
     // TODO utiliser la méthode Stream.iterate
     // TODO cette méthode doit produire le même résultat que imperativeSum
     private long iterateSum(long n) {
-        return 0;
+    	long result = Stream.iterate(1L,i->i+1).limit(n-1).collect(Collectors.summingLong(l -> l.longValue()));
+        return result;
     }
 
     // TODO exécuter le test pour vérifier que les méthodes imperativeSum et iterateSum produisent le même résultat
@@ -44,7 +49,6 @@ public class Stream_06_Test {
         Stream.of(1L, 1000L, NB).forEach(n -> {
             long result1 = imperativeSum(n);
             long result2 = iterateSum(n);
-
             assertThat(result1, is(result2));
         });
     }
@@ -53,7 +57,7 @@ public class Stream_06_Test {
     // TODO utiliser la méthode Stream.iterate
     // TODO transformer en stream parallel (.parallel())
     private long parallelIterateSum(long n) {
-        return 0;
+        return Stream.iterate(1L,i->i+1).limit(n-1).parallel().collect(Collectors.summingLong(l -> l.longValue()));
     }
 
     // TODO exécuter le test pour vérifier que les méthodes imperativeSum, iterateSum et parallelIterateSum produisent le même résultat
@@ -91,9 +95,17 @@ public class Stream_06_Test {
     // TODO visualiser les temps d'exécution
     @Test
     public void monitor_imperativeSum_vs_iterateSum_vs_parallelIterateSum() {
-        Logger.getAnonymousLogger().info("imperativeSum => " + /* TODO */" ms");
-        Logger.getAnonymousLogger().info("iterateSum => " + /* TODO */" ms");
-        Logger.getAnonymousLogger().info("parallelIterateSum => " + /* TODO */ " ms");
+    	Map<String,Long> result = new HashMap<String,Long>();
+    	result.put("imperativeSum", monitor(c -> imperativeSum(NB),1000L));
+    	result.put("iterateSum", monitor(c -> iterateSum(NB),1000L));
+    	result.put("parallelIterateSum", monitor(c -> parallelIterateSum(NB),1000L));
+    	
+    	Optional<Entry<String, Long>> gagant = result.entrySet().stream().min((p1,p2) -> Long.compare(p1.getValue(),p2.getValue()));
+    	System.out.println("Sur ma machine, le gagnan est ... " + gagant.get().getKey());
+//
+//        Logger.getAnonymousLogger().info("imperativeSum => " + result.get("imperativeSum") +" ms");
+//        Logger.getAnonymousLogger().info("iterateSum => " + result.get("iterateSum") + " ms");
+//        Logger.getAnonymousLogger().info("parallelIterateSum => " + result.get("parallelIterateSum") +  " ms");
     }
 
     // Quel résultat obtenez-vous ?
@@ -107,16 +119,18 @@ public class Stream_06_Test {
     // TODO compléter la méthode rangeSum
     // TODO utiliser la méthode LongStream.rangeClosed
     private long rangeSum(long n) {
-        return 0;
+    	long res = LongStream.rangeClosed(1L,NB).sum();
+    	System.out.println("result: "+ res);
+        return res;
     }
 
     // TODO vérifier que l'implémentation de rangeSum
     @Test
     public void test_imperativeSum_vs_rangeSum() {
-
         Stream.of(1L, 20L, 1000L, NB).forEach(n -> {
             long result1 = imperativeSum(n);
             long result2 = rangeSum(n);
+            System.out.println("result2: "+ result2);
 
             assertThat(result1, is(result2));
         });
