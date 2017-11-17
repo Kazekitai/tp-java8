@@ -28,7 +28,7 @@ public class Stream_07_Test {
     private class Accumulator {
         private long total;
 
-        private void add(long value) {
+        private synchronized void add(long value) {
             total += value;
         }
     }
@@ -40,7 +40,7 @@ public class Stream_07_Test {
         LongStream longStream = LongStream.rangeClosed(1, n - 1);
 
         // TODO pour chaque élément de longStream, invoquer la méthode add de l'accumulateur (acc)
-
+        
         return acc.total;
     }
 
